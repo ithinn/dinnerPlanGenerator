@@ -23,7 +23,7 @@ const DayItem = ( { data, index, handleClick }) => {
                 <Text>{time}</Text>
             </View>        
             <View>
-                <Pressable style={styles.button} title={"btn" + index} onPress={handleClick}>
+                <Pressable style={styles.button} title={"btn" + index} onPress={() => {handleClick({index})}}>
                     <Text style={styles.btnTxt}>Bytt rett</Text>
                 </Pressable>
             </View>

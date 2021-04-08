@@ -1,4 +1,4 @@
-/*import React, {createContext, useContext, useEffect, useState} from "react"
+import React, {createContext, useContext, useEffect, useState} from "react"
 import firebaseInstance from "../FirebaseInstance"
 
 
@@ -6,7 +6,7 @@ const PageContext = createContext({
     dinnerList: null,
     filterList: null,
     changeDinnerList: () => {},
-    database: null
+    database: [],
   
 })
 
@@ -14,8 +14,8 @@ export const Page = ({children}) => {
 
     const [dinnerList, setDinnerList] = useState(null);
     const [filterList, setFilterList] = useState(null);
-    const [database, setDatabase] = useState(null)
-    /*
+    const [database, setDatabase] = useState([])
+    
     useEffect(() => {
     
         readCollection("dinners")
@@ -75,8 +75,8 @@ export const Page = ({children}) => {
     
 
     const changeDinnerList = (data) => {
-       // console.log("a change", data);
-        setDinnerList(data);
+        console.log("a change", data);
+       // setDinnerList(data);
     } 
 
     return(
@@ -97,4 +97,3 @@ export const usePageContext = () => {
 }
 
 
-*/
