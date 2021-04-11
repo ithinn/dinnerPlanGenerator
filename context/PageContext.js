@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useState} from "react"
+/*import React, {createContext, useContext, useEffect, useState} from "react"
 import firebaseInstance from "../FirebaseInstance"
 
 
@@ -89,11 +89,12 @@ export const Page = ({children}) => {
         
         }}>{children}</PageContext.Provider>
     )
-
 }
+
 
 export const usePageContext = () => {
     return useContext(PageContext);
 }
 
 
+*/

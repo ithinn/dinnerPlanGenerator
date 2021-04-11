@@ -20,7 +20,7 @@ const DayItem = ( { data, index, handleClick }) => {
             <View>
                 <Text>{day}</Text>
                 <Text>{data.name}</Text>
-                <Text>{time}</Text>
+                <Text>{time || "string"}</Text>
             </View>        
             <View>
                 <Pressable style={styles.button} title={"btn" + index} onPress={() => {handleClick({index})}}>
