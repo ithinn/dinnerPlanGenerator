@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity, Pressable, TouchableWithoutFeedback} from 'react-native';
 import React from "react"
+import {Button} from "react-native-elements"
+//import { ListItem } from 'react-native-elements/dist/list/ListItem';
+import { ListItem, Avatar } from 'react-native-elements'
 const DayItem = ( { data, index, handleClick }) => {
  
     const day = 
@@ -15,20 +18,22 @@ const DayItem = ( { data, index, handleClick }) => {
     data.time === 2 ? "30 min" : "45 min +"
 
     return(
+<>
+      
 
         <View style={styles.container}>
-            <View>
+            <View style={{maxWidth: 180, margin: 10}}>
                 <Text>{day}</Text>
                 <Text>{data.name}</Text>
                 <Text>{time || "string"}</Text>
             </View>        
             <View>
-                <Pressable style={styles.button} title={"btn" + index} onPress={() => {handleClick({index})}}>
-                    <Text style={styles.btnTxt}>Bytt rett</Text>
-                </Pressable>
+                <Button titleStyle={{fontSize: 18 }}title="Bytt rett" onPress={() => {handleClick({index})}} />
             </View>
           
         </View>
+
+        </>
           
     )
 }
@@ -47,16 +52,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
   
     },
-    button: {
-        backgroundColor: "gray",
-        width: 50,
-        padding: 10,
-        margin: 5
-    },
-    btnTxt: {
-        textAlign: "center",
-        color: "white"
-    }
+    
 })
 
 

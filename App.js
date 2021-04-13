@@ -6,9 +6,11 @@ import { Page } from "./context/PageContext"
 import firebaseInstance from "./FirebaseInstance"
 import DayItem from "./components/DayItem";
 import ModalContent from "./components/ModalContent";
+import {Button, Divider} from "react-native-elements"
+import Icon from "react-native-vector-icons/FontAwesome"
 
 export default function App() {
-
+  const [isLoading, setIsLoading] = useState(false);
   const [weekday, setWeekday] = useState([]);
   const [friday, setFriday] = useState([]);
   const [sunday, setSunday] = useState([]);
@@ -17,67 +19,71 @@ export default function App() {
   const [filteredData, setFilteredData] = useState([]);
   const [database, setDatabase] = useState([])
   const [isModal, setIsModal] = useState(false);
-  const [filterParams, setFilterParams] = useState([]);
   const [isChecked, setIsChecked] = useState({
-    meat: false,
-    fish: false,
-    veg: false,
-    glutenFree: false,
-    lactoseFree: false,
-});
+    filters:[
+      {type: "meat", checked: false, text: "Kjøtt"},
+      {type: "fish", checked: false, text: "Fisk"},
+      {type: "veg", checked: false, text: "Vegetar"},
+      {type: "glutenFree", checked: false, text: "Glutenfri"},
+      {type: "lactoseFree", checked: false, text: "Laktosefri"},
+      {type: "mon", checked: false, text: "Mandag", index: 0},
+      {type: "tue", checked: false, text: "Tirsdag", index: 1},
+      {type: "wed", checked: false, text: "Onsdag", index: 2},
+      {type: "thu", checked: false, text: "Torsdag", index: 3},
+      {type: "fri", checked: false, text: "Fredag", index: 4},
+      {type: "sat", checked: false, text: "Lørdag", index: 5},
+      {type: "sun", checked: false, text: "Søndag", index:6},
+    ]}
+  );
 
-  
-  //console.log("FilteredData Global", filteredData);
-  //console.log("Dinnerlist global!", dinnerList)
-  //console.log("WEEKSAY global", weekday);
-  //console.log("FRISAY global", friday);
-  //console.log("SunSAY global", sunday);
-  //console.log("Fastfood global", fastFood);
+
 
   //Get data from Firebase
   useEffect(() => {
+    setIsLoading(true);
+
+    async function readCollection(text) {
+      try{
+        const collection = await firebaseInstance.firestore().collection(text)
+        const readCollection = await collection.get()
+  
+        let returnArray = [];
+  
+        readCollection.forEach(item => {
+
+          const itemData = item.data() || {};
+      
+          returnArray.push({
+            id: item.id,
+            ...itemData
+          })
+        })
+        
+        setDatabase(returnArray);
+        setIsLoading(false)
+      }
+      catch(error) {
+        console.log(error)
+        setIsLoading(false);
+      }
+    }
+
       readCollection("dinners")
   }, [])
 
 
-    async function readCollection(text) {
-        try{
-          const collection = await firebaseInstance.firestore().collection(text)
-          const readCollection = await collection.get()
     
-          let returnArray = [];
-    
-          readCollection.forEach(item => {
-
-            const itemData = item.data() || {};
-        
-            returnArray.push({
-              id: item.id,
-              ...itemData
-            })
-          })
-          
-          setDatabase(returnArray);
-        }
-        catch(error) {
-          console.log(error)
-        }
-      }
     
     //set filteredData to "database"
     useEffect(() => {
-      //console.log("Effect database")
-      
       setFilteredData([...database])
     }, [database]);
     
 
-    //Apply filter when a new filterParam is added/removed
-    useEffect(() => {
-      //console.log("Apply is supposed to be called in effect")
+    //Apply filter when a filter is added/removed
+    useEffect(() => { 
       applyFilter();
-    }, [filterParams]);
-
+    }, [isChecked]);
 
 
     //Organize courses in weekday,friday and sunday-lists
@@ -101,44 +107,25 @@ export default function App() {
             const fastFood = item => item.time === 1;
             tempArr = filter(fastFood, filteredData);
             setFastFood(tempArr);
-        }
 
-      
+
+        }
 
     }, [filteredData])
 
-    useEffect(() => {
-      let tempArr = []
-
-      for (let item in isChecked) {
-        //let tempArr;
-        console.log("EFFECT", item);
-        console.log(isChecked[item]);
-
-        if (isChecked[item]) {
-          console.log("klaff på begtingelse")
-          tempArr.push(item)
-          //setFilterParams([...filterParams, item])
-        }
-        
-      }
-
-     console.log("TEMPARR IN EFFECT", tempArr);
-      setFilterParams([...tempArr])
-      
-    }, [isChecked])
-
-    console.log("FilterParams", filterParams);
-
+  
+  
+    //re-fill dinnerList every time weekday changes (i.e: apply filter)
     useEffect(() => {
       
       if (weekday.length > 0) {
-        //console.log("Nå fylles lista!!");
         fillDinnerList();
       }
  
     }, [weekday]);
 
+
+    //General filter function - used throughout the code
     const filter = (condition, collection) => {
         const result = [];
 
@@ -151,21 +138,19 @@ export default function App() {
         return result;
     }
 
-    
-
+    //Get random index from arr
     const randomIndex = (arr) => {
       let index = Math.floor(Math.random()*arr.length)
       return index;
   }
 
+  //Sets the 7 days dinner list based on the weekday, friday and sunday arrays
     const fillDinnerList = () => {
       let list = [];
       let tempWeek = [...weekday];
       let tempFri = [...friday];
       let tempSun = [...sunday];
       
-      //console.log("FillDinnerList is called");
-
       //Push weekday dinners
       for (let i=0; i <= 4; i++) {
         let index = randomIndex(tempWeek);
@@ -186,7 +171,8 @@ export default function App() {
       list.splice(6, 0, sDinner);
       tempSun.splice(s, 1)
 
-      console.log("LIST in FillDinnerList", list)
+      list = applyFastFilter(list);
+
       setDinnerList(list);
     }
 
@@ -196,25 +182,29 @@ const applyFilter = () => {
   let meatArr = [];
   let fishArr = [];
   let vegArr = [];
+  let glutArr = [];
+  let lactoseArr = [];
 
-  console.log("Apply is actually called")
 
-  filterParams.forEach(param => {
-    
-    //console.log("PARAM", param);
+  isChecked.filters.forEach(param => {
 
-    if (param === "meat") {
-      let meat = item => item.type === "meat";
-      meatArr = filter(meat, tempArr)
-    }
-    if (param === "fish") {
-      let fish = item => item.type === "fish";
-      fishArr = filter(fish, tempArr);
-    } 
-    if (param === "veg") {
-      console.log("T", tempArr);
-      let veg = item => item.type === "veg";
-      vegArr = filter(veg, tempArr);
+    if (param.checked) {
+
+      if (param.type === "meat") {
+        let meat = item => item.type === "meat";
+        meatArr = filter(meat, tempArr)  
+      }
+      if (param.type === "fish") {
+        let fish = item => item.type === "fish";
+        fishArr = filter(fish, tempArr);
+      } 
+      if (param.type === "veg") {
+        console.log("T", tempArr);
+        let veg = item => item.type === "veg";
+        vegArr = filter(veg, tempArr);
+      }
+      
+
     }
   })
 
@@ -222,14 +212,53 @@ const applyFilter = () => {
     tempArr = [...fishArr, ...vegArr, ...meatArr];
   }
 
-    //console.log("MEATARR in Applyfilter", meatArr);
-    //console.log("fishARR in Applyfilter", fishArr);
-    //console.log("vegARR in Applyfilter", vegArr);
+  console.log("tempArr in apply", tempArr);
 
-    //console.log("TEMPARR in ApplyFilter", tempArr)
-    setFilteredData(tempArr);
+  isChecked.filters.forEach(param => {
+
+    
+    if (param.checked) {
+      console.log("2", param)
+
+      if (param.type === "glutenFree") {
+        console.log("it's glutenfree")
+        let glut = item => item.type === "glutenFree";
+        glutArr = filter(glut, tempArr);
+      }
+    }
+  })
+  console.log("glutarr", glutArr);
+  console.log("tempArr after flutfilter", tempArr)
+
+
+
+  setFilteredData(tempArr);
+
 
 }
+
+//Changes to a course with time===1 on the days where the user is extra busy
+const applyFastFilter = (array) => {
+
+  let list = array;
+  let weekDay = [];
+  let newCourse; 
+
+  isChecked.filters.forEach(filter => {
+    if (filter.index !== undefined && filter.checked === true) {
+      weekDay.push(filter.index);
+    }
+  })
+
+  weekDay.forEach(dayIndex => {
+    newCourse = getNewCourse(fastFood);
+    list.splice(dayIndex, 1, newCourse);
+  })
+
+  return list;
+}
+
+
 
 
 //-----------------------------------------------------------Change course
@@ -239,6 +268,7 @@ const getNewCourse = (array) => {
 
   return newCourse
 }
+
 
 const changeCourse = ({index}) => {
 let newArr = [...dinnerList];
@@ -295,74 +325,35 @@ if (index < 4 || index === 5) {
 setDinnerList(newArr);
 
 }
+//---------------------------------------------------------------------------------------------
 
 
 const toggleModal = () => {
-setIsModal(!isModal);
+  setIsModal(!isModal);
 }
 
-const handleFilter = () => {
-  /*let tempArr = [...filterParams];
 
-  tempArr.forEach((param, index) => {
-    if (param === type) {
-      tempArr.splice(index, 1);
+const toggleFilters = ({type, text}) => {
+
+  let tempArr = isChecked.filters.map(item => {
+    
+    if (item.type === type) {
+      console.log("itemtype", item.type)
+      console.log("type", type);
+      return {...item, checked: !item.checked};
     } 
+
+    return item
   })
-  
-  if (tempArr.length < filterParams.length) {
-    setFilterParams([...tempArr])
-  } else {
-    setFilterParams([...filterParams, type]);
-  }
- 
-   
-  
-  */
 
-  
-}
-
-const toggleFilterBoxes = ({type}) => {
-  console.log("toggle skjer")
-  console.log("TYPE IN TOOGGLE", type);
-
-  switch(type) {
-    case "meat":
-        setIsChecked({...isChecked, meat: isChecked.meat ? false : true});
-        break
-    case "fish":
-        setIsChecked({...isChecked, fish: isChecked.fish ? false : true});
-        break
-    case "veg":
-        setIsChecked({...isChecked, veg: isChecked.veg ? false : true});
-        break
-    case "glutenFree":
-        setIsChecked({...isChecked, glutenFree: isChecked.glutenFree ? false : true});
-        break
-    case "veg":
-        setIsChecked({...isChecked, lactoseFree: isChecked.lactoseFree ? false : true});
-        break
-        
-  }
+  setIsChecked({filters: tempArr});
 
 }
 
 
 
 
-const checkIfItemExcists = item => {
-  filterParams.forEach(param => {
-    if (param === item) {
-      return true
-    } 
-  })
-  return false;
 
-
-}
-
-//console.log("FILTERPARAMS global", filterParams);
   return (
     
       <View style={styles.container}>
@@ -371,13 +362,42 @@ const checkIfItemExcists = item => {
           <Text style={styles.mainHd}>DINNER!</Text>
 
           <View style={styles.btnWrap}>
-            <Pressable style={styles.bigButton} onPress={fillDinnerList}>
-              <Text style={styles.bigButtonText}>Ny liste</Text>
-            </Pressable>
+            <Button icon={
+              <Icon
+                name="arrow-right"
+                size={15}
+                color="white"
+              />
+            } title="Ny liste" iconContainerStyle={{padding: 25, margin: 12}} raised={true} onPress={fillDinnerList}/>
+            <Button icon={
+              <Icon name="filter" size={15} color="white"/>  
+            }
+              
+              title="Filter" titleStyle={{fontSize: 25, padding: 5, margin: 10 }} raised={true} onPress={toggleModal}/>
+          
+          <Divider style={{height: 5, backgroundColor: "blue"}}/>
 
-            <Pressable style={styles.bigButton} onPress={toggleModal}>
-              <Text style={styles.bigButtonText}>Filtrer</Text>
-            </Pressable>
+          </View>
+            
+              {isChecked.filters.map((param, index) => {
+                let type = param.type;
+                
+                if (param.checked) {
+                  return(
+                    <Button
+                      title={param.text}
+                      key={"btnKey" + index}
+                      type="outline"
+                      onPress={() => {toggleFilters({type})}}
+                    />
+                  )
+                }
+               
+              })
+            }
+
+          <View>
+
           </View>
 
         </View>
@@ -386,7 +406,7 @@ const checkIfItemExcists = item => {
         <ScrollView>
 
         <Modal 
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={isModal}
             onRequestClose={() => {
@@ -395,31 +415,37 @@ const checkIfItemExcists = item => {
             }}
             >
         
-        <View style={styles.container}>
-            <View style={styles.modalView}>
-              <ModalContent 
-                textstyle={styles.tagTxt} 
-                tagstyle={styles.tag} 
-                handleChange={handleFilter}
-                toggleFilter={toggleFilterBoxes}
-                isChecked={isChecked}
-                checkButtons={checkIfItemExcists}/>
-                
-              <Pressable style={styles.bigButton} onPress={toggleModal}>
-                <Text style={styles.bigButtonText}>skru av modal</Text>
-              </Pressable>
+          <View style={styles.container}>
+              <ScrollView contentContainerStyle={styles.modalView}>
+                <Button 
+                  icon={
+                  <Icon name="times-circle" size={30}/>
+                  }
+                  onPress={() => {setIsModal(!isModal)}}
+                />
+                <ModalContent 
+        
+                  toggleFilter={toggleFilters}
+                  isChecked={isChecked.filters}
+                  />
 
-              <Pressable style={styles.bigButton} onPress={() => {setFilterParams([])}}>
-                <Text style={styles.bigButtonText}>tøm filter</Text>
-              </Pressable>
-            </View>
-        </View>
+
+                  
+                <Pressable style={styles.bigButton} onPress={toggleModal}>
+                  <Text style={styles.bigButtonText}>skru av modal</Text>
+                </Pressable>
+
+                <Pressable style={styles.bigButton} onPress={() => {setFilterParams([])}}>
+                  <Text style={styles.bigButtonText}>tøm filter</Text>
+                </Pressable>
+              </ScrollView>
+          </View>
 
         </Modal>
 
         
 
-        <View>
+        <View style={styles.itemWrap}>
           {dinnerList !== null && (
               dinnerList.map((item, index) => {
                 return (<DayItem data={item} index={index} handleClick={changeCourse} />)
@@ -446,9 +472,9 @@ const styles = StyleSheet.create({
     padding: 10
   },
   btnWrap: {
-
+    width: 100,
     flexDirection: "row",
-    alignItems: "stretch"
+    alignItems: "flex-start"
     
   },
   bigButton: {
@@ -461,6 +487,10 @@ const styles = StyleSheet.create({
   },
   bigButtonText: {
     color: "white"
+  },
+  itemWrap: {
+    maxWidth: 320,
+
   },
   mainHd: {
     fontSize: 50, 
@@ -478,6 +508,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
+    width: 320,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -491,7 +522,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5 
 
-}
+}, 
+
 });
 
 /*

@@ -3,73 +3,73 @@ import { StyleSheet, Modal, Pressable, Text, View, TouchableOpacity, TouchableWi
 import {CheckBox} from "react-native-elements";
 
 
-const ModalContent = ( {toggleFilter, isChecked, checkButtons, tagstyle, textstyle, handleChange} ) => {
+const ModalContent = ( {toggleFilter, isChecked } ) => {
 
-    const filteroptions = [
-        [
-        {text: "Kjøtt", type: "meat"}, 
-        {text: "Fisk", type: "fish"}, 
-        { text: "Vegetar", type: "veg"}, 
-        {text: "Glutenfritt", type: "glutenFree"}, 
-        {text: "Laktosefritt", type: "lactoseFree"}],
-        ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"],
-    ]
+    let iWant = [];
+    let imBusy = [];
 
-  
-
-    const [toggleCheckbox, setToggleCheckbox] = useState(false);
+    isChecked.forEach((item, index) => {
+        if (index < 5 ) {
+            iWant.push(item);
+        } else {
+            imBusy.push(item);
+        }
+    })
 
     
-
-    console.log("isChecked", isChecked);
     return(
         <>
-        <Text>Filtrer</Text>
-        
-
         <View>
-            <Text>Jeg vil ha: </Text>
-            {filteroptions[0].map((item, index) => {
-
-                const text = item.text;
-                const type = item.type;
-               // console.log("ischecked type", isChecked[type], type)
-                //const testType = isChecked[type];
-                //console.log("TESTTYPE", testType);
-
-                return (
-
-                    <CheckBox
-                        center
-                        title={text}
-                        checkedIcon='dot-circle-o'
-                        uncheckedIcon='circle-o'
-                        checked={isChecked[type]}
-                        checkedColor={"blue"}
-                        uncheckedColor={"pink"}
-                        onPress={() => {toggleFilter({type})}}
-                   
+            <View style={{marginBottom: 30}}>
+                <Text style={{fontSize: 20, textAlign: "center", margin: 10}}>Jeg vil ha: </Text>
             
-        
-        />
+                {iWant.map((item, index) => {
                     
-                )
-            })}
-        </View>
-
-
+                    const type = item.type;
         
+                    return (
+                        <CheckBox
+                            key={"cb" + index}
+                            center
+                            title={item.text}
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                            checked={item.checked}
+                            checkedColor={"blue"}
+                            uncheckedColor={"pink"}
+                            onPress={() => {toggleFilter({type})}}
+                        />
+                    )
+                })}
+            </View>
+
+            <View>
+                <Text style={{fontSize: 20, textAlign: "center", margin: 10}}>Jeg har det ekstra travelt: </Text>
+
+                {imBusy.map((item, index) => {
+                   
+                    const type = item.type;
+        
+                    return (
+                        <CheckBox
+                            key={item.type + index}
+                            center
+                            title={item.text}
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                            checked={item.checked}
+                            checkedColor={"blue"}
+                            uncheckedColor={"pink"}
+                            onPress={() => {toggleFilter({type})}}
+                        />
+                    )
+                })}
+            </View>
+
+        </View>   
         </>
     )
 }
 
-
-
 export default ModalContent;
 
-/*<Pressable 
-                    key={item.type + index} 
-                    style={{color: checkButtons(type) ? "red" : "blue"}} 
-                    onPress={() => {handleChange({index, text, type})}}>
-                        <Text style={textstyle}>{item.text}</Text>
-                    </Pressable>*/
