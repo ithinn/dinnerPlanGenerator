@@ -8,6 +8,8 @@ import DayItem from "./components/DayItem";
 import ModalContent from "./components/ModalContent";
 import {Button, Divider} from "react-native-elements"
 import Icon from "react-native-vector-icons/FontAwesome"
+//import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -214,28 +216,59 @@ const applyFilter = () => {
 
   console.log("tempArr in apply", tempArr);
 
+  
   isChecked.filters.forEach(param => {
 
-    
     if (param.checked) {
       console.log("2", param)
 
       if (param.type === "glutenFree") {
         console.log("it's glutenfree")
         let glut = item => item.type === "glutenFree";
+
+        console.log("glut", glut);
         glutArr = filter(glut, tempArr);
+        console.log("glutArr i betingelse", glutArr)
       }
     }
   })
+
   console.log("glutarr", glutArr);
   console.log("tempArr after flutfilter", tempArr)
-
+  
 
 
   setFilteredData(tempArr);
 
-
 }
+
+/*
+const applyGlutLact = () => {
+  let tempArr = [...filteredData];
+  let glutArr = [];
+  let lactoseArr = [];
+  
+  isChecked.filters.forEach(param => {
+
+    if (param.checked) {
+      console.log("2", param)
+
+      if (param.type === "glutenFree") {
+        console.log("it's glutenfree")
+        let glut = item => item.type === "glutenFree";
+
+        console.log("glut", glut);
+        glutArr = filter(glut, tempArr);
+        console.log("glutArr i betingelse", glutArr)
+      }
+    }
+  })
+
+  console.log("glutarr", glutArr);
+  console.log("tempArr after flutfilter", tempArr)
+  return glutArr;
+
+}*/
 
 //Changes to a course with time===1 on the days where the user is extra busy
 const applyFastFilter = (array) => {
@@ -274,7 +307,7 @@ const changeCourse = ({index}) => {
 let newArr = [...dinnerList];
 console.log("CHANGE")
 let newDatabase = [...database];
-
+let newIndex;
 /*
 newDatabase.forEach((dinner, i) => {
 
@@ -355,6 +388,7 @@ const toggleFilters = ({type, text}) => {
 
 
   return (
+
     
       <View style={styles.container}>
 
@@ -369,11 +403,12 @@ const toggleFilters = ({type, text}) => {
                 color="white"
               />
             } title="Ny liste" iconContainerStyle={{padding: 25, margin: 12}} raised={true} onPress={fillDinnerList}/>
-            <Button icon={
-              <Icon name="filter" size={15} color="white"/>  
-            }
+            <Button 
+              icon={
+              <Icon name="filter" size={50} color="white"/>  
+              }
               
-              title="Filter" titleStyle={{fontSize: 25, padding: 5, margin: 10 }} raised={true} onPress={toggleModal}/>
+              raised={true} onPress={toggleModal}/>
           
           <Divider style={{height: 5, backgroundColor: "blue"}}/>
 
@@ -388,6 +423,7 @@ const toggleFilters = ({type, text}) => {
                       title={param.text}
                       key={"btnKey" + index}
                       type="outline"
+                      raised={true}
                       onPress={() => {toggleFilters({type})}}
                     />
                   )
@@ -429,15 +465,6 @@ const toggleFilters = ({type, text}) => {
                   isChecked={isChecked.filters}
                   />
 
-
-                  
-                <Pressable style={styles.bigButton} onPress={toggleModal}>
-                  <Text style={styles.bigButtonText}>skru av modal</Text>
-                </Pressable>
-
-                <Pressable style={styles.bigButton} onPress={() => {setFilterParams([])}}>
-                  <Text style={styles.bigButtonText}>tøm filter</Text>
-                </Pressable>
               </ScrollView>
           </View>
 
@@ -458,7 +485,8 @@ const toggleFilters = ({type, text}) => {
         <StatusBar style="auto" />
         </ScrollView>
       </View>
-      
+
+ 
 
   );
 }
