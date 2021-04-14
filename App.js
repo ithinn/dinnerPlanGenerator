@@ -1,13 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Modal, Pressable, Text, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView} from 'react-native';
+import { StyleSheet, Modal, Pressable, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView} from 'react-native';
 import firebaseInstance from "./FirebaseInstance"
 import DayItem from "./components/DayItem";
 import ModalContent from "./components/ModalContent";
-import {Button, Divider} from "react-native-elements"
+import {Button, Divider, Text} from "react-native-elements"
 import Icon from "react-native-vector-icons/FontAwesome"
 import {filter, randomIndex, userIsBusy, getNewCourse } from "./utils/helperFunctions"
-
+import * as WebBrowser from "expo-web-browser"
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -265,32 +265,27 @@ newArr = applyFastFilter(newArr);
 setDinnerList(newArr);
 }
 
+const handleOpenWithWebBrowser = (url) => {
+  console.log("webbrowser")
+  WebBrowser.openBrowserAsync(url)
+}
 
   return (
 
     
     <View style={styles.container}>
 
-      <View >
-        <Text style={styles.mainHd}>DINNER!</Text>
-
-        <View style={styles.btnWrap}>
-          <Button icon={
-            <Icon
-              name="arrow-right"
-              size={15}
-              color="white"
-            />
-          } title="Ny liste" iconContainerStyle={{padding: 25, margin: 12}} raised={true} onPress={fillDinnerList}/>
-          <Button 
+      <View style={{flexDirection: "row", alignItems: "center", marginTop: 70}}>
+        <Text h1 >Ukeplan</Text>
+        <Button 
             icon={
-              <Icon name="filter" size={50} color="white"/>  
+              <Icon name="filter" size={40} color="white"/>  
             }     
-            raised={true} onPress={toggleModal}/>
-          
-          <Divider style={{height: 5, backgroundColor: "blue"}}/>
+            raised={true} onPress={toggleModal} buttonStyle={{backgroundColor: "#333"}} containerStyle={{height: 50, margin: 10}}/>
+         
 
-          </View>
+      </View>
+      <View>
             
               {isChecked.filters.map((param, index) => {
                 let type = param.type;
@@ -331,9 +326,11 @@ setDinnerList(newArr);
         
           <View style={styles.container}>
               <ScrollView contentContainerStyle={styles.modalView}>
-                <Button 
+                <Button
+                  containerStyle={{justifySelf: "flex-end"}} 
+                  buttonStyle={{backgroundColor: "#fff"}}
                   icon={
-                  <Icon name="times-circle" size={30}/>
+                  <Icon name="times-circle" size={50}/>
                   }
                   onPress={() => {setIsModal(!isModal)}}
                 />
@@ -353,7 +350,7 @@ setDinnerList(newArr);
         <View style={styles.itemWrap}>
           {dinnerList !== null && (
               dinnerList.map((item, index) => {
-                return (<DayItem data={item} index={index} handleClick={changeCourse} />)
+                return (<DayItem handleUrl={handleOpenWithWebBrowser} data={item} index={index} handleClick={changeCourse} />)
               })
           )}
         </View>

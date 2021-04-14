@@ -30,13 +30,16 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
                     return (
                         <CheckBox
                             key={"cb" + index}
-                            center
+                            
+                            size={30}
+                            containerStyle={{backgroundColor: "#e7e7e6"}}
+                            textStyle={{fontSize: 18}}
                             title={item.text}
                             checkedIcon='dot-circle-o'
                             uncheckedIcon='circle-o'
                             checked={item.checked}
-                            checkedColor={"blue"}
-                            uncheckedColor={"pink"}
+                            checkedColor={"darkcyan"}
+                            uncheckedColor={"#a96dd8"}
                             onPress={() => {toggleFilter({type})}}
                         />
                     )
@@ -53,13 +56,15 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
                     return (
                         <CheckBox
                             key={item.type + index}
-                            center
+                            
+                            containerStyle={{backgroundColor: "#e7e7e6"}}
+                            textStyle={{fontSize: 18}}
                             title={item.text}
                             checkedIcon='dot-circle-o'
                             uncheckedIcon='circle-o'
                             checked={item.checked}
-                            checkedColor={"blue"}
-                            uncheckedColor={"pink"}
+                            checkedColor={"darkcyan"}
+                            uncheckedColor={"#a96dd8"}
                             onPress={() => {toggleFilter({type})}}
                         />
                     )
