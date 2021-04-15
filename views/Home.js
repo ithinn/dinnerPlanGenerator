@@ -1,72 +1,15 @@
-import React from "react";
-import {Stylesheet, View} from "react-native"
-import { NavigationContainer } from "@react-navigation/native"
-import Home from "./views/Home";
-import User from "./views/User";
-import { enableScreens } from "react-native-screens";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import TabBar from "./components/TabBar";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-enableScreens();
-
-const Tabs = createBottomTabNavigator();
-
-console.log("tabs", Tabs);
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Tabs.Navigator tabBar={props => <TabBar {...props}/>} >
-        <Tabs.Screen 
-          name="HomeTab" 
-          component={Home} 
-          options={{
-            tabBarLabel: "Ny plan",
-          }} />
-
-        <Tabs.Screen 
-          name="UserTab" 
-          component={User}
-          options={{
-            tabBarLabel: "Min plan",
-          }}/>
-      </Tabs.Navigator>
-    </NavigationContainer>
-  )
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Modal, Pressable, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView} from 'react-native';
-import firebaseInstance from "./FirebaseInstance"
-import DayItem from "./components/DayItem";
-import ModalContent from "./components/ModalContent";
+import firebaseInstance from "../FirebaseInstance"
+import DayItem from "../components/DayItem";
+import ModalContent from "../components/ModalContent";
 import {Button, Divider, Text} from "react-native-elements"
 import Icon from "react-native-vector-icons/FontAwesome"
-import {filter, randomIndex, userIsBusy, getNewCourse } from "./utils/helperFunctions"
+import {filter, randomIndex, userIsBusy, getNewCourse } from "../utils/helperFunctions"
 import * as WebBrowser from "expo-web-browser"
 
-export default function App() {
+export default function Home({route, navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [weekday, setWeekday] = useState([]);
   const [friday, setFriday] = useState([]);
@@ -92,6 +35,13 @@ export default function App() {
       {type: "sun", checked: false, text: "Søndag", index:6},
     ]}
   );
+
+  console.log("route", route);
+  console.log("nav", navigation);
+
+  const handleNavigate = () => {
+    navigation.navigate("UserTab")
+}
 
   //----------------------------------------------------------------useEffects
 
@@ -327,10 +277,17 @@ const handleOpenWithWebBrowser = (url) => {
   WebBrowser.openBrowserAsync(url)
 }
 
+
+const saveInLocalStorage = () => {
+    console.log("saveinlocalstorage")
+}
+
   return (
 
     
     <View style={styles.container}>
+
+    
 
       <View style={{flexDirection: "row", alignItems: "center", marginTop: 70}}>
         <Text h1 >Ukeplan</Text>
@@ -340,7 +297,7 @@ const handleOpenWithWebBrowser = (url) => {
             }     
             raised={true} onPress={toggleModal} buttonStyle={{backgroundColor: "#333"}} containerStyle={{height: 50, margin: 10}}/>
          
-
+         <Button title="lagre" onPress={saveInLocalStorage}/>  
       </View>
       <View>
             
