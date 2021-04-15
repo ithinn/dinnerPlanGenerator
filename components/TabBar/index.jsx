@@ -47,12 +47,12 @@ function TabBar({ state, descriptors, navigation}) {
           });
         };
 
-        const color = isFocused ? "red" : "blue"
-
+     
         return (
 
           
-            <Button 
+            <Button
+                accessibilityLabel={options.tabBarAccessibilityLabel}
                 title={label} 
                 onPress={onPress}
                 containerStyle={{width: "50%"}}

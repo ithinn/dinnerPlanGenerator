@@ -4,13 +4,17 @@ import { StyleSheet, Modal, Pressable, View, TouchableOpacity, TouchableWithoutF
 import firebaseInstance from "../FirebaseInstance"
 import DayItem from "../components/DayItem";
 import ModalContent from "../components/ModalContent";
-import {Button, Divider, Text} from "react-native-elements"
+import {Button, Divider, Text, Header, Image} from "react-native-elements"
 import Icon from "react-native-vector-icons/FontAwesome"
 import {filter, randomIndex, userIsBusy, getNewCourse } from "../utils/helperFunctions"
 import * as WebBrowser from "expo-web-browser"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useStorageContext, Storage } from "../context/StorageContext";
+import { ActivityIndicator } from 'react-native';
 
 export default function Home({route, navigation}) {
   const [isLoading, setIsLoading] = useState(false);
+
   const [weekday, setWeekday] = useState([]);
   const [friday, setFriday] = useState([]);
   const [sunday, setSunday] = useState([]);
@@ -36,13 +40,57 @@ export default function Home({route, navigation}) {
     ]}
   );
 
-  console.log("route", route);
-  console.log("nav", navigation);
+  const storage = useStorageContext();
+  //console.log("storageC", storageC)
 
-  const handleNavigate = () => {
-    navigation.navigate("UserTab")
-}
+//-------------------------------------------------------------------LocalStorage
+    //Lese og bruke localstorage om den ikke er null
+    /*useEffect(() => {
+        const getData = async () => {
+            try {
+                const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+                console.log("jsonValue from store", jsonValue);
 
+                if (jsonValue !== null) {
+                    const parsedJson = JSON.parse(jsonValue);
+                    setStorage(parsedJson)
+
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        getData();
+    }, [])*/
+/*
+    
+
+    //Store dinnerList in local storage
+    useEffect(() => {
+        console.log("changed");
+        const storeData = async (value) => {
+            try {
+                const jsonValue = JSON.stringify(value);
+                console.log("jsonvalue in home", jsonValue);
+                storage.changeStorage();
+                await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
+                
+            }
+            catch (error) {
+                console.log("Error, coult not store in local storage")
+            }
+        };
+
+        storeData(dinnerList);
+    }, [dinnerList])
+
+    console.log("storage", storage.storage)*/
+    
+    /*
+    useEffect(() => {
+        storage.changeStorage();
+    }, [dinnerList]);*/
   //----------------------------------------------------------------useEffects
 
   //Get data from Firebase
@@ -271,33 +319,59 @@ newArr = applyFastFilter(newArr);
 
 setDinnerList(newArr);
 }
+const logoPath = "./logo.png"
 
 const handleOpenWithWebBrowser = (url) => {
   console.log("webbrowser")
   WebBrowser.openBrowserAsync(url)
 }
 
-
-const saveInLocalStorage = () => {
-    console.log("saveinlocalstorage")
-}
-
   return (
-
-    
+  
     <View style={styles.container}>
+    <Header
+        placement="right"
+        containerStyle={{
+           backgroundColor: "#f9f9f8"
+        }}
 
-    
+        leftComponent={
+            <Image 
+                accessibility={true}
+                accessibilityLabel="Logo"
+                source={require("../assets/logo.png")}
+                style={{width: 140, height: 50}}
+                PlaceholderContent={<ActivityIndicator/>}/>
+        }
 
-      <View style={{flexDirection: "row", alignItems: "center", marginTop: 70}}>
-        <Text h1 >Ukeplan</Text>
-        <Button 
-            icon={
-              <Icon name="filter" size={40} color="white"/>  
-            }     
-            raised={true} onPress={toggleModal} buttonStyle={{backgroundColor: "#333"}} containerStyle={{height: 50, margin: 10}}/>
-         
-         <Button title="lagre" onPress={saveInLocalStorage}/>  
+        centerComponent={
+            <Button 
+                
+                accessibilityLabel="Lagre listen"
+                icon={
+                    <Icon name="save" size={35} color="darkcyan"/>  
+                }  
+                raised={true}
+                type="outline" 
+                containerStyle={{height: 50,}}
+                onPress={() => {storage.saveInStorage(dinnerList)}}/>  
+        }
+
+        rightComponent={
+            <Button 
+                accessibilityLabel="Åpne filter"
+                icon={
+                    <Icon name="filter" size={40} color="darkcyan"/>  
+                }     
+                raised={true} 
+                onPress={toggleModal} 
+                type="outline"
+                containerStyle={{height: 50}}/>
+        }/>
+
+      <View style={{flexDirection: "row", alignItems: "center", marginTop: 30}}>
+        <Text h1 >Lag ukeplan</Text>
+       
       </View>
       <View>
             
@@ -307,6 +381,7 @@ const saveInLocalStorage = () => {
                 if (param.checked) {
                   return(
                     <Button
+                        accessibilityHint={`Fjern ${param.text} fra filteret`}
                       title={param.text}
                       key={"btnKey" + index}
                       type="outline"
@@ -341,7 +416,7 @@ const saveInLocalStorage = () => {
           <View style={styles.container}>
               <ScrollView contentContainerStyle={styles.modalView}>
                 <Button
-                   
+                    accessibilityLabel={"Lukk filteroversikt"}
                   buttonStyle={{backgroundColor: "#fff"}}
                   icon={
                   <Icon name="times-circle" size={50}/>
@@ -375,15 +450,15 @@ const saveInLocalStorage = () => {
         </ScrollView>
       </View>
 
- 
-
+  
+  
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f8',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10

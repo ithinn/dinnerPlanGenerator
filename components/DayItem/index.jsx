@@ -28,13 +28,20 @@ const DayItem = ( { data, index, handleClick, handleUrl }) => {
                 <Text h4>{time || "string"}</Text>
             </View>        
             <View style={{flexDirection:"row"}}>
-                <Button buttonStyle={{backgroundColor: "#a96dd8"}} icon={
-                    <Icon name="undo" size={15} color="white"/>
+                <Button 
+                    accessibilityHint={`Bytt til en annen rett på ${day}`}
+                    buttonStyle={{backgroundColor: "#a96dd8"}} 
+                    icon={
+                        <Icon name="undo" size={15} color="white"/>
                     }
-                    containerStyle={{margin: 10, width: 120}} titleStyle={{fontSize: 18 }}title="Bytt rett" onPress={() => {handleClick({index})}} />
+                    containerStyle={{margin: 10, width: 120}} 
+                    titleStyle={{fontSize: 18 }}
+                    title="Bytt rett" 
+                    onPress={() => {handleClick({index})}} />
                 <Button
-                buttonStyle={{backgroundColor: "#a96dd8"}}
-                icon={
+                    accessibilityHint={"Åpne et googlesøk for denne oppskriften i nettleseren din"}
+                    buttonStyle={{backgroundColor: "#a96dd8"}}
+                    icon={
                     <Icon name="arrow-right" size={20} color="white"/>
                     }
                     title="Oppskrifter"

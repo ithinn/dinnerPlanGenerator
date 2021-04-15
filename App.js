@@ -7,7 +7,7 @@ import { enableScreens } from "react-native-screens";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TabBar from "./components/TabBar";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import {Storage} from "./context/StorageContext"
 enableScreens();
 
 const Tabs = createBottomTabNavigator();
@@ -16,6 +16,7 @@ console.log("tabs", Tabs);
 
 export default function App() {
   return (
+    <Storage>
     <NavigationContainer>
       <Tabs.Navigator tabBar={props => <TabBar {...props}/>} >
         <Tabs.Screen 
@@ -23,6 +24,7 @@ export default function App() {
           component={Home} 
           options={{
             tabBarLabel: "Ny plan",
+            tabBarAccessibilityLabel: "Lag ukeplan"
           }} />
 
         <Tabs.Screen 
@@ -30,9 +32,11 @@ export default function App() {
           component={User}
           options={{
             tabBarLabel: "Min plan",
+            tabBarAccessibilityLabel: "Din lagrede ukeplan"
           }}/>
       </Tabs.Navigator>
     </NavigationContainer>
+    </Storage>
   )
 }
 
