@@ -8,6 +8,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TabBar from "./components/TabBar";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Storage} from "./context/StorageContext"
+import {Dinner} from "./context/DinnerContext";
+
 enableScreens();
 
 const Tabs = createBottomTabNavigator();
@@ -16,6 +18,7 @@ console.log("tabs", Tabs);
 
 export default function App() {
   return (
+    <Dinner>
     <Storage>
     <NavigationContainer>
       <Tabs.Navigator tabBar={props => <TabBar {...props}/>} >
@@ -37,6 +40,7 @@ export default function App() {
       </Tabs.Navigator>
     </NavigationContainer>
     </Storage>
+    </Dinner>
   )
 }
 

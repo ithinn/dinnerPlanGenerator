@@ -11,6 +11,7 @@ import * as WebBrowser from "expo-web-browser"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStorageContext, Storage } from "../context/StorageContext";
 import { ActivityIndicator } from 'react-native';
+import {useDinnerContext} from "../context/DinnerContext"
 
 export default function Home({route, navigation}) {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +44,9 @@ export default function Home({route, navigation}) {
   const storage = useStorageContext();
   //console.log("storageC", storageC)
 
+  const dinnerContext = useDinnerContext();
+
+  console.log("dinnerContext", dinnerContext);
 //-------------------------------------------------------------------LocalStorage
     //Lese og bruke localstorage om den ikke er null
     /*useEffect(() => {
