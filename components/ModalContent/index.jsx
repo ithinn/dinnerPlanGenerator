@@ -55,7 +55,7 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
         
                     return (
                         <CheckBox
-                            key={item.type + index}
+                            key={"cb" + index}
                             accessibilityLabel={`Jeg har det travelt på ${item.text}`}
                             containerStyle={{backgroundColor: "#e7e7e6"}}
                             textStyle={{fontSize: 18}}
