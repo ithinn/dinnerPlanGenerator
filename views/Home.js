@@ -347,7 +347,7 @@ export default function Home() {
         <Text h1 >Lag ukeplan</Text>
       </View>
       
-      <View>         
+      <View style={{marginBottom: 10}}>         
         {isChecked.filters.map((param, index) => {
           let type = param.type;
           
@@ -366,12 +366,8 @@ export default function Home() {
          
         })}
       </View>
-        
-
-      <ScrollView>
-
-        <Modal 
-          animationType="fade"
+      <Modal 
+          
           transparent={true}
           visible={isModal}
           onRequestClose={() => {
@@ -398,7 +394,8 @@ export default function Home() {
             </ScrollView>
           </View>
         </Modal>
-
+        
+      <ScrollView>
         <View style={styles.itemWrap}>
           {dinnerList !== null && (  
             dinnerList.map((item, index) => {

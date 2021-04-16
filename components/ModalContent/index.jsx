@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Modal, Pressable, Text, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Alert} from 'react-native';
-import {CheckBox} from "react-native-elements";
+import React from 'react';
+import { View } from 'react-native';
+import {CheckBox, Text} from "react-native-elements";
 
 
 const ModalContent = ( {toggleFilter, isChecked } ) => {
@@ -8,6 +8,7 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
     let iWant = [];
     let imBusy = [];
 
+    //Splits the filter parameters into two lists (one with days and one with preferences)
     isChecked.forEach((item, index) => {
         if (index < 5 ) {
             iWant.push(item);
@@ -15,13 +16,12 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
             imBusy.push(item);
         }
     })
-
     
     return(
-        <>
         <View>
-            <View style={{marginBottom: 30}}>
-                <Text style={{fontSize: 20, textAlign: "center", margin: 10}}>Jeg vil ha: </Text>
+            <View style={{marginBottom: 30, marginTop: 20}}>
+
+                <Text h3 h3Style={{textAlign: "center"}}>Jeg vil ha: </Text>
             
                 {iWant.map((item, index) => {
                     
@@ -47,7 +47,7 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
             </View>
 
             <View>
-                <Text style={{fontSize: 20, textAlign: "center", margin: 10}}>Jeg har det ekstra travelt: </Text>
+                <Text h3 h3Style={{textAlign: "center"}}>Jeg har det travelt: </Text>
 
                 {imBusy.map((item, index) => {
                    
@@ -70,9 +70,7 @@ const ModalContent = ( {toggleFilter, isChecked } ) => {
                     )
                 })}
             </View>
-
         </View>   
-        </>
     )
 }
 
