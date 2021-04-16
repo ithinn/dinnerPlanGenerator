@@ -16,7 +16,7 @@ export default function User() {
 
                 leftComponent={
                     <Image 
-                        source={require("../assets/logo.png")}
+                        source={require("../assets/logo_purple.png")}
                         style={{width: 140, height: 50}}/>
                 }
             />

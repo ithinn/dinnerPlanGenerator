@@ -314,7 +314,7 @@ export default function Home() {
           <Image 
               accessibility={true}
               accessibilityLabel="Logo"
-              source={require("../assets/logo.png")}
+              source={require("../assets/logo_purple.png")}
               style={{width: 140, height: 50}}
               PlaceholderContent={<ActivityIndicator/>}/>
         }
@@ -323,7 +323,7 @@ export default function Home() {
           <Button 
               accessibilityLabel="Lagre listen"
               icon={
-                  <Icon name="save" size={35} color="darkcyan"/>  
+                  <Icon name="save" size={35} color="#a96dd8"/>  
               }  
               raised={true}
               type="outline" 
@@ -335,7 +335,7 @@ export default function Home() {
           <Button 
               accessibilityLabel="Åpne filter"
               icon={
-                  <Icon name="filter" size={40} color="darkcyan"/>  
+                  <Icon name="filter" size={40} color="#a96dd8"/>  
               }     
               raised={true} 
               onPress={toggleModal} 
