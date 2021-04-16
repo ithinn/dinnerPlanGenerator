@@ -1,9 +1,8 @@
-import { StyleSheet, Text, View, TouchableOpacity, Pressable, TouchableWithoutFeedback} from 'react-native';
 import React from "react"
-import {Button} from "react-native-elements"
-//import { ListItem } from 'react-native-elements/dist/list/ListItem';
-import { ListItem, Avatar } from 'react-native-elements'
-const DayItem = ( { data, index, handleClick }) => {
+import { StyleSheet, View } from 'react-native';
+import { Button, Text } from "react-native-elements"
+
+const DayItem = ( { data, index, handlePress, handleUrl }) => {
  
     const day = 
     index === 0 ? "Mandag" : 
@@ -15,26 +14,35 @@ const DayItem = ( { data, index, handleClick }) => {
 
     const time = 
     data.time === 1 ? "20 min" : 
-    data.time === 2 ? "30 min" : "45 min +"
+    data.time === 2 ? "30 min" : "+30 min"
 
     return(
-<>
-      
 
         <View style={styles.container}>
-            <View style={{maxWidth: 180, margin: 10}}>
-                <Text>{day}</Text>
-                <Text>{data.name}</Text>
-                <Text>{time || "string"}</Text>
+            
+            <View style={{maxWidth: 300, margin: 10}}>
+                <Text h4 h4Style={{textTransform: "uppercase"}}>{day}</Text>
+                <Text h3>{data.name}</Text>
+                <Text h4>{time}</Text>
             </View>        
-            <View>
-                <Button titleStyle={{fontSize: 18 }}title="Bytt rett" onPress={() => {handleClick({index})}} />
+            
+            <View style={{flexDirection:"row"}}>
+                <Button 
+                    accessibilityHint={`Bytt til en annen rett på ${day}`}
+                    buttonStyle={{backgroundColor: "#a96dd8"}} 
+                    containerStyle={{margin: 10, width: 120}} 
+                    titleStyle={{fontSize: 18 }}
+                    title="Bytt rett" 
+                    onPress={() => {handlePress({index})}} />
+                <Button
+                    accessibilityHint={"Åpne et googlesøk for denne oppskriften i nettleseren din"}
+                    buttonStyle={{backgroundColor: "#a96dd8"}}
+                    title="Oppskrifter"
+                    containerStyle={{margin: 10, width: 120}} 
+                    onPress={() => handleUrl(data.url)}
+                />
             </View>
-          
-        </View>
-
-        </>
-          
+        </View>     
     )
 }
 
@@ -44,16 +52,9 @@ const styles = StyleSheet.create({
     container: {
         padding: 10,
         borderWidth: 1,
-        borderColor: "blue",
         marginTop: 20,
         flex: 1,
         justifyContent: "space-between",
-        alignItems: "center",
-        flexDirection: "row",
-  
+        alignItems: "flex-start",
     },
-    
 })
-
-
-//{data.time === 1 ? "20 min" : data.time === 2 ? "30 min" : "45 min +"}

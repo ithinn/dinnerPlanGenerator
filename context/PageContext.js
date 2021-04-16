@@ -23,7 +23,7 @@ export const Page = ({children}) => {
     }, [])
 
 
-    console.log("Database in context", database)
+    //console.log("Database in context", database)
     
     async function readCollection(text) {
         try{
@@ -39,12 +39,12 @@ export const Page = ({children}) => {
             })
           })
           
-          console.log("Firebase in context", returnArray);
+          //console.log("Firebase in context", returnArray);
           setDatabase(returnArray);
          // return(returnArray);
         }
         catch(error) {
-          console.log(error)
+          //console.log(error)
         }
       }
 
@@ -56,7 +56,7 @@ export const Page = ({children}) => {
             const course = item => item.friday === false;
             tempArr = filter(course, database)
 
-         //   console.log("TEMPARR in context", tempArr);
+         //   //console.log("TEMPARR in context", tempArr);
         }  
     })
 
@@ -75,7 +75,7 @@ export const Page = ({children}) => {
     
 
     const changeDinnerList = (data) => {
-        console.log("a change", data);
+        //console.log("a change", data);
        // setDinnerList(data);
     } 
 
